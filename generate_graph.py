@@ -3,8 +3,10 @@ from bs4 import BeautifulSoup
 import networkx as nx
 from pyvis.network import Network
 
-SUBJECT_CODES = ["INFO"]
+SUBJECT_CODES = []
 
+# This KEY_PHRASES uses a rather ugly hack to solve edge cases with sentence breaks.
+# TODO: Fix should be simple, just parse sentences better
 KEY_PHRASES = [
     "prerequisite",
     "corequisite",
@@ -21,6 +23,7 @@ KEY_PHRASES = [
     "9in"
 ]
 
+# TODO: Is there a way to fetch old courses?
 OLD_COURSE_LIST = [
     "CSE142",
     "CSE143",
@@ -34,6 +37,14 @@ OLD_COURSE_LIST = [
 
 
 def main():         
+    print("Example subject codes:\nCSE\nMATH\nPHYS\nE E\nINFO\n")
+    while True:
+        subject_code = input("Enter a subject code (or 'done' to finish): ")
+        if subject_code.lower() == 'done':
+            break
+
+        SUBJECT_CODES.append(subject_code)
+
     # Get all URLs for various subjects at UW
     subjects = dict()
     for subject in SUBJECT_CODES:
