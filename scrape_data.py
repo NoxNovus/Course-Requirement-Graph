@@ -33,13 +33,15 @@ def extract_prereqs(course_details):
     Key observation: if a course is mentioned in another course's description, 
     it is probably a pre-req.
     """
+    # Basic formatting to make the process easier
     formatted_subject_codes = [code.replace(" ", "") for code in SUBJECT_CODES]
     formatted_course_details = {
         key.upper(): value.replace(' ', '')
         for key, value in course_details.items()
     }
 
-    # Remove all courses that
+    # Remove all courses that have mutual exclusion:
+    # courses that cannot be taken for credit if credit received for another course
     for key, value in formatted_course_details.items():
         new_value = value.replace(key, '')
         sentences = new_value.split('.')
@@ -47,6 +49,7 @@ def extract_prereqs(course_details):
         result_string = '.'.join(filtered_sentences)
         formatted_course_details[key] = result_string
 
+    # Go through and extract all the mentioned courses from course descriptions
     course_prereqs = {}
     for course, details in formatted_course_details.items():
         prereqs = set()
