@@ -3,8 +3,7 @@ from bs4 import BeautifulSoup
 import networkx as nx
 from pyvis.network import Network
 
-# SUBJECT_CODES = ["CSE", "MATH", "E E", "INFO", "PHYS"]
-SUBJECT_CODES = ["CSE"]
+SUBJECT_CODES = ["B A"]
 
 KEY_PHRASES = [
     "prerequisite",
@@ -34,7 +33,7 @@ OLD_COURSE_LIST = [
 ]
 
 
-def main():            
+def main():         
     # Get all URLs for various subjects at UW
     subjects = dict()
     for subject in SUBJECT_CODES:
@@ -67,8 +66,6 @@ def main():
     nt = Network(directed=True, height="500px", width="100%", bgcolor="#222222", font_color="white")
     nt.from_nx(course_graph)
     nt.show("course_prerequisites.html", notebook=False)
-
-    print(nx.is_directed_acyclic_graph(course_graph))
 
 
 def create_course_graph(course_dict):
@@ -109,7 +106,6 @@ def extract_prereqs(course_details):
             sentence for sentence in sentences 
             if any(phrase.lower() in sentence.lower() for phrase in KEY_PHRASES)
         ]
-        print(filtered_sentences)
         result_string = '.'.join(filtered_sentences)
         formatted_course_details[key] = result_string
 
@@ -163,6 +159,19 @@ def download_HTML(course, url):
     else:
         print(f"Failed to retrieve the page. Status code: {response.status_code}")
         return False
+    
+
+def parse_course_ids(file_path):
+    """
+    Parse in course IDs from file.
+    """
+    try:
+        with open(file_path, 'r') as file:
+            course_ids = [line.strip() for line in file.readlines()]
+        return course_ids
+    except FileNotFoundError:
+        print(f"Error: File '{file_path}' not found.")
+        return []
 
 
 if __name__ == "__main__":
