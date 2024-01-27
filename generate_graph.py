@@ -1,8 +1,10 @@
+import os
 import requests
 from bs4 import BeautifulSoup
 import networkx as nx
 from pyvis.network import Network
 
+HTML_DIRECTORY = "./html"
 SUBJECT_CODES = []
 
 # This KEY_PHRASES uses a rather ugly hack to solve edge cases with sentence breaks.
@@ -52,11 +54,16 @@ def main():
 
         break
 
+    # Set up HTML directory
+    if not os.path.exists(HTML_DIRECTORY):
+        os.makedirs(HTML_DIRECTORY)
+
     # Get all URLs for various subjects at UW
     subjects = dict()
     for subject in SUBJECT_CODES:
         subjects[subject] = f"https://www.washington.edu/students/crscat/{''.join(subject.split()).lower()}.html"
 
+    # Loop through subjects, fetch details, and extract data
     course_prereqs = dict()
     for subject in subjects:
         # Fetch HTML, if unsuccessful, skip all further steps for this subject
@@ -65,15 +72,13 @@ def main():
             continue
 
         # Construct dict of courses to course details
-        course_details = parse_courses(f"{subject}.html")
+        course_details = parse_courses(f"{HTML_DIRECTORY}/{subject}.html")
 
         # Get a map of courses to course prereqs, and add to overall map
         course_prereqs.update(extract_prereqs(course_details))
 
     # Prune old courses
     course_prereqs = {key: value for key, value in course_prereqs.items() if key not in OLD_COURSE_LIST}
-
-
     for course, prereqs in course_prereqs.items():
         for prereq_class in OLD_COURSE_LIST:
             if prereq_class in prereqs:
@@ -170,7 +175,7 @@ def download_HTML(course, url):
 
     if response.status_code == 200:
         soup = BeautifulSoup(response.text, 'html.parser')
-        with open(f"{course}.html", "w", encoding="utf-8") as file:
+        with open(f"{HTML_DIRECTORY}/{course}.html", "w", encoding="utf-8") as file:
             file.write(response.text)
         return True
 
