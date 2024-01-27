@@ -1,11 +1,38 @@
 import requests
 from bs4 import BeautifulSoup
 import networkx as nx
-import matplotlib.pyplot as plt
 from pyvis.network import Network
 
-SUBJECT_CODES = ["CSE", "MATH", "E E", "INFO", "PHYS"]
+# SUBJECT_CODES = ["CSE", "MATH", "E E", "INFO", "PHYS"]
 SUBJECT_CODES = ["CSE"]
+
+KEY_PHRASES = [
+    "prerequisite",
+    "corequisite",
+    "recommend",
+    "0in",
+    "1in",
+    "2in",
+    "3in",
+    "4in",
+    "5in",
+    "6in",
+    "7in",
+    "8in",
+    "9in"
+]
+
+OLD_COURSE_LIST = [
+    "CSE142",
+    "CSE143",
+    "CSE303",
+    "CSE321",
+    "CSE322",
+    "CSE326",
+    "CSE370",
+    "CSE378"
+]
+
 
 def main():            
     # Get all URLs for various subjects at UW
@@ -26,14 +53,28 @@ def main():
         # Get a map of courses to course prereqs, and add to overall map
         course_prereqs.update(extract_prereqs(course_details))
 
+    # Prune old courses
+    course_prereqs = {key: value for key, value in course_prereqs.items() if key not in OLD_COURSE_LIST}
+
+
+    for course, prereqs in course_prereqs.items():
+        for prereq_class in OLD_COURSE_LIST:
+            if prereq_class in prereqs:
+                prereqs.remove(prereq_class)
+
     # Construct the graph and visualize it
     course_graph = create_course_graph(course_prereqs)
-    nt = Network(height="500px", width="100%", bgcolor="#222222", font_color="white")
+    nt = Network(directed=True, height="500px", width="100%", bgcolor="#222222", font_color="white")
     nt.from_nx(course_graph)
     nt.show("course_prerequisites.html", notebook=False)
 
+    print(nx.is_directed_acyclic_graph(course_graph))
+
 
 def create_course_graph(course_dict):
+    """
+    Construct the graph via networkx from the raw dependencies.
+    """
     G = nx.DiGraph()
 
     for course in course_dict:
@@ -64,7 +105,11 @@ def extract_prereqs(course_details):
     for key, value in formatted_course_details.items():
         new_value = value.replace(key, '')
         sentences = new_value.split('.')
-        filtered_sentences = [sentence.strip() for sentence in sentences if "creditreceived" not in sentence]
+        filtered_sentences = [
+            sentence for sentence in sentences 
+            if any(phrase.lower() in sentence.lower() for phrase in KEY_PHRASES)
+        ]
+        print(filtered_sentences)
         result_string = '.'.join(filtered_sentences)
         formatted_course_details[key] = result_string
 

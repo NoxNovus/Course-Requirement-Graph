@@ -1,0 +1,250 @@
+<html>
+    <head>
+        <meta charset="utf-8">
+        
+            <script src="lib/bindings/utils.js"></script>
+            <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/vis-network/9.1.2/dist/dist/vis-network.min.css" integrity="sha512-WgxfT5LWjfszlPHXRmBWHkV2eceiWTOBvrKCNbdgDYTHrT2AeLCGbF4sZlZw3UMN3WtL0tGUoIAKsu8mllg/XA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/vis-network/9.1.2/dist/vis-network.min.js" integrity="sha512-LnvoEWDFrqGHlHmDD2101OrLcbsfkrzoSpvtSQtxK3RMnRV0eOkhhBN2dXHKRrUU8p2DGRTk35n4O8nWSVe1mQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+            
+        
+<center>
+<h1></h1>
+</center>
+
+<!-- <link rel="stylesheet" href="../node_modules/vis/dist/vis.min.css" type="text/css" />
+<script type="text/javascript" src="../node_modules/vis/dist/vis.js"> </script>-->
+        <link
+          href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/css/bootstrap.min.css"
+          rel="stylesheet"
+          integrity="sha384-eOJMYsd53ii+scO/bJGFsiCZc+5NDVN2yr8+0RDqr0Ql0h+rP48ckxlpbzKgwra6"
+          crossorigin="anonymous"
+        />
+        <script
+          src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.bundle.min.js"
+          integrity="sha384-JEW9xMcG8R+pH31jmWH6WWP0WintQrMb4s7ZOdauHnUtxwoG2vI5DkLtS3qm9Ekf"
+          crossorigin="anonymous"
+        ></script>
+
+
+        <center>
+          <h1></h1>
+        </center>
+        <style type="text/css">
+
+             #mynetwork {
+                 width: 100%;
+                 height: 500px;
+                 background-color: #222222;
+                 border: 1px solid lightgray;
+                 position: relative;
+                 float: left;
+             }
+
+             
+             #loadingBar {
+                 position:absolute;
+                 top:0px;
+                 left:0px;
+                 width: 100%;
+                 height: 500px;
+                 background-color:rgba(200,200,200,0.8);
+                 -webkit-transition: all 0.5s ease;
+                 -moz-transition: all 0.5s ease;
+                 -ms-transition: all 0.5s ease;
+                 -o-transition: all 0.5s ease;
+                 transition: all 0.5s ease;
+                 opacity:1;
+             }
+
+             #bar {
+                 position:absolute;
+                 top:0px;
+                 left:0px;
+                 width:20px;
+                 height:20px;
+                 margin:auto auto auto auto;
+                 border-radius:11px;
+                 border:2px solid rgba(30,30,30,0.05);
+                 background: rgb(0, 173, 246); /* Old browsers */
+                 box-shadow: 2px 0px 4px rgba(0,0,0,0.4);
+             }
+
+             #border {
+                 position:absolute;
+                 top:10px;
+                 left:10px;
+                 width:500px;
+                 height:23px;
+                 margin:auto auto auto auto;
+                 box-shadow: 0px 0px 4px rgba(0,0,0,0.2);
+                 border-radius:10px;
+             }
+
+             #text {
+                 position:absolute;
+                 top:8px;
+                 left:530px;
+                 width:30px;
+                 height:50px;
+                 margin:auto auto auto auto;
+                 font-size:22px;
+                 color: #000000;
+             }
+
+             div.outerBorder {
+                 position:relative;
+                 top:400px;
+                 width:600px;
+                 height:44px;
+                 margin:auto auto auto auto;
+                 border:8px solid rgba(0,0,0,0.1);
+                 background: rgb(252,252,252); /* Old browsers */
+                 background: -moz-linear-gradient(top,  rgba(252,252,252,1) 0%, rgba(237,237,237,1) 100%); /* FF3.6+ */
+                 background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,rgba(252,252,252,1)), color-stop(100%,rgba(237,237,237,1))); /* Chrome,Safari4+ */
+                 background: -webkit-linear-gradient(top,  rgba(252,252,252,1) 0%,rgba(237,237,237,1) 100%); /* Chrome10+,Safari5.1+ */
+                 background: -o-linear-gradient(top,  rgba(252,252,252,1) 0%,rgba(237,237,237,1) 100%); /* Opera 11.10+ */
+                 background: -ms-linear-gradient(top,  rgba(252,252,252,1) 0%,rgba(237,237,237,1) 100%); /* IE10+ */
+                 background: linear-gradient(to bottom,  rgba(252,252,252,1) 0%,rgba(237,237,237,1) 100%); /* W3C */
+                 filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#fcfcfc', endColorstr='#ededed',GradientType=0 ); /* IE6-9 */
+                 border-radius:72px;
+                 box-shadow: 0px 0px 10px rgba(0,0,0,0.2);
+             }
+             
+
+             
+
+             
+        </style>
+    </head>
+
+
+    <body>
+        <div class="card" style="width: 100%">
+            
+            
+            <div id="mynetwork" class="card-body"></div>
+        </div>
+
+        
+            <div id="loadingBar">
+              <div class="outerBorder">
+                <div id="text">0%</div>
+                <div id="border">
+                  <div id="bar"></div>
+                </div>
+              </div>
+            </div>
+        
+        
+
+        <script type="text/javascript">
+
+              // initialize global variables.
+              var edges;
+              var nodes;
+              var allNodes;
+              var allEdges;
+              var nodeColors;
+              var originalNodes;
+              var network;
+              var container;
+              var options, data;
+              var filter = {
+                  item : '',
+                  property : '',
+                  value : []
+              };
+
+              
+
+              
+
+              // This method is responsible for drawing the graph, returns the drawn network
+              function drawGraph() {
+                  var container = document.getElementById('mynetwork');
+
+                  
+
+                  // parsing and collecting nodes and edges from the python
+                  nodes = new vis.DataSet([{"color": "#97c2fc", "font": {"color": "white"}, "id": "CSE121", "label": "CSE121", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "CSE122", "label": "CSE122", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "CSE123", "label": "CSE123", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "CSE154", "label": "CSE154", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "CSE163", "label": "CSE163", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "CSE391", "label": "CSE391", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "CSE311", "label": "CSE311", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "CSE331", "label": "CSE331", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "CSE340", "label": "CSE340", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "CSE341", "label": "CSE341", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "CSE351", "label": "CSE351", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "CSE373", "label": "CSE373", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "CSE374", "label": "CSE374", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "CSE412", "label": "CSE412", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "CSE414", "label": "CSE414", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "CSE416", "label": "CSE416", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "CSE469", "label": "CSE469", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "CSE474", "label": "CSE474", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "CSE160", "label": "CSE160", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "CSE312", "label": "CSE312", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "CSE332", "label": "CSE332", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "CSE344", "label": "CSE344", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "CSE352", "label": "CSE352", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "CSE369", "label": "CSE369", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "CSE472", "label": "CSE472", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "CSE486", "label": "CSE486", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "CSE531", "label": "CSE531", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "CSE586", "label": "CSE586", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "CSE421", "label": "CSE421", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "CSE422", "label": "CSE422", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "CSE426", "label": "CSE426", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "CSE427", "label": "CSE427", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "CSE428", "label": "CSE428", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "CSE431", "label": "CSE431", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "CSE446", "label": "CSE446", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "CSE447", "label": "CSE447", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "CSE473", "label": "CSE473", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "CSE478", "label": "CSE478", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "CSE481", "label": "CSE481", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "CSE515", "label": "CSE515", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "CSE543", "label": "CSE543", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "CSE546", "label": "CSE546", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "CSE403", "label": "CSE403", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "CSE454", "label": "CSE454", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "CSE482", "label": "CSE482", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "CSE401", "label": "CSE401", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "CSE402", "label": "CSE402", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "CSE440", "label": "CSE440", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "CSE442", "label": "CSE442", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "CSE444", "label": "CSE444", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "CSE451", "label": "CSE451", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "CSE452", "label": "CSE452", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "CSE453", "label": "CSE453", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "CSE455", "label": "CSE455", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "CSE457", "label": "CSE457", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "CSE461", "label": "CSE461", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "CSE467", "label": "CSE467", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "CSE484", "label": "CSE484", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "CSE521", "label": "CSE521", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "CSE333", "label": "CSE333", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "CSE501", "label": "CSE501", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "CSE505", "label": "CSE505", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "CSE371", "label": "CSE371", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "CSE475", "label": "CSE475", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "CSE410", "label": "CSE410", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "CSE413", "label": "CSE413", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "CSE415", "label": "CSE415", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "CSE417", "label": "CSE417", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "CSE573", "label": "CSE573", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "CSE441", "label": "CSE441", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "CSE582", "label": "CSE582", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "CSE548", "label": "CSE548", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "CSE550", "label": "CSE550", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "CSE551", "label": "CSE551", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "CSE553", "label": "CSE553", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "CSE561", "label": "CSE561", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "CSE458", "label": "CSE458", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "CSE459", "label": "CSE459", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "CSE460", "label": "CSE460", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "CSE470", "label": "CSE470", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "CSE571", "label": "CSE571", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "CSE487", "label": "CSE487", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "CSE488", "label": "CSE488", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "CSE506", "label": "CSE506", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "CSE522", "label": "CSE522", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "CSE523", "label": "CSE523", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "CSE524", "label": "CSE524", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "CSE525", "label": "CSE525", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "CSE547", "label": "CSE547", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "CSE549", "label": "CSE549", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "CSE552", "label": "CSE552", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "CSE557", "label": "CSE557", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "CSE558", "label": "CSE558", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "CSE567", "label": "CSE567", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "CSE568", "label": "CSE568", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "CSE574", "label": "CSE574", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "CSE576", "label": "CSE576", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "CSE577", "label": "CSE577", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "CSE587", "label": "CSE587", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "CSE110", "label": "CSE110", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "CSE112", "label": "CSE112", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "CSE131", "label": "CSE131", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "CSE180", "label": "CSE180", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "CSE190", "label": "CSE190", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "CSE301", "label": "CSE301", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "CSE390", "label": "CSE390", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "CSE399", "label": "CSE399", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "CSE450", "label": "CSE450", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "CSE456", "label": "CSE456", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "CSE464", "label": "CSE464", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "CSE480", "label": "CSE480", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "CSE490", "label": "CSE490", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "CSE491", "label": "CSE491", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "CSE492", "label": "CSE492", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "CSE493", "label": "CSE493", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "CSE495", "label": "CSE495", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "CSE496", "label": "CSE496", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "CSE497", "label": "CSE497", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "CSE498", "label": "CSE498", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "CSE499", "label": "CSE499", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "CSE503", "label": "CSE503", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "CSE504", "label": "CSE504", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "CSE507", "label": "CSE507", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "CSE510", "label": "CSE510", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "CSE512", "label": "CSE512", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "CSE513", "label": "CSE513", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "CSE517", "label": "CSE517", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "CSE519", "label": "CSE519", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "CSE520", "label": "CSE520", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "CSE526", "label": "CSE526", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "CSE527", "label": "CSE527", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "CSE528", "label": "CSE528", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "CSE529", "label": "CSE529", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "CSE532", "label": "CSE532", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "CSE533", "label": "CSE533", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "CSE535", "label": "CSE535", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "CSE541", "label": "CSE541", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "CSE544", "label": "CSE544", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "CSE556", "label": "CSE556", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "CSE564", "label": "CSE564", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "CSE578", "label": "CSE578", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "CSE579", "label": "CSE579", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "CSE580", "label": "CSE580", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "CSE581", "label": "CSE581", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "CSE583", "label": "CSE583", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "CSE589", "label": "CSE589", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "CSE590", "label": "CSE590", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "CSE591", "label": "CSE591", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "CSE599", "label": "CSE599", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "CSE600", "label": "CSE600", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "CSE601", "label": "CSE601", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "CSE700", "label": "CSE700", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "CSE800", "label": "CSE800", "shape": "dot", "size": 10}]);
+                  edges = new vis.DataSet([{"arrows": "to", "from": "CSE121", "to": "CSE122", "width": 1}, {"arrows": "to", "from": "CSE122", "to": "CSE123", "width": 1}, {"arrows": "to", "from": "CSE122", "to": "CSE154", "width": 1}, {"arrows": "to", "from": "CSE122", "to": "CSE163", "width": 1}, {"arrows": "to", "from": "CSE122", "to": "CSE391", "width": 1}, {"arrows": "to", "from": "CSE123", "to": "CSE154", "width": 1}, {"arrows": "to", "from": "CSE123", "to": "CSE163", "width": 1}, {"arrows": "to", "from": "CSE123", "to": "CSE311", "width": 1}, {"arrows": "to", "from": "CSE123", "to": "CSE331", "width": 1}, {"arrows": "to", "from": "CSE123", "to": "CSE340", "width": 1}, {"arrows": "to", "from": "CSE123", "to": "CSE341", "width": 1}, {"arrows": "to", "from": "CSE123", "to": "CSE351", "width": 1}, {"arrows": "to", "from": "CSE123", "to": "CSE373", "width": 1}, {"arrows": "to", "from": "CSE123", "to": "CSE374", "width": 1}, {"arrows": "to", "from": "CSE123", "to": "CSE391", "width": 1}, {"arrows": "to", "from": "CSE123", "to": "CSE412", "width": 1}, {"arrows": "to", "from": "CSE123", "to": "CSE414", "width": 1}, {"arrows": "to", "from": "CSE123", "to": "CSE416", "width": 1}, {"arrows": "to", "from": "CSE123", "to": "CSE469", "width": 1}, {"arrows": "to", "from": "CSE123", "to": "CSE474", "width": 1}, {"arrows": "to", "from": "CSE160", "to": "CSE154", "width": 1}, {"arrows": "to", "from": "CSE160", "to": "CSE163", "width": 1}, {"arrows": "to", "from": "CSE160", "to": "CSE416", "width": 1}, {"arrows": "to", "from": "CSE163", "to": "CSE154", "width": 1}, {"arrows": "to", "from": "CSE163", "to": "CSE412", "width": 1}, {"arrows": "to", "from": "CSE163", "to": "CSE414", "width": 1}, {"arrows": "to", "from": "CSE163", "to": "CSE416", "width": 1}, {"arrows": "to", "from": "CSE311", "to": "CSE312", "width": 1}, {"arrows": "to", "from": "CSE311", "to": "CSE332", "width": 1}, {"arrows": "to", "from": "CSE311", "to": "CSE344", "width": 1}, {"arrows": "to", "from": "CSE311", "to": "CSE352", "width": 1}, {"arrows": "to", "from": "CSE311", "to": "CSE369", "width": 1}, {"arrows": "to", "from": "CSE311", "to": "CSE472", "width": 1}, {"arrows": "to", "from": "CSE311", "to": "CSE486", "width": 1}, {"arrows": "to", "from": "CSE311", "to": "CSE531", "width": 1}, {"arrows": "to", "from": "CSE311", "to": "CSE586", "width": 1}, {"arrows": "to", "from": "CSE312", "to": "CSE421", "width": 1}, {"arrows": "to", "from": "CSE312", "to": "CSE422", "width": 1}, {"arrows": "to", "from": "CSE312", "to": "CSE426", "width": 1}, {"arrows": "to", "from": "CSE312", "to": "CSE427", "width": 1}, {"arrows": "to", "from": "CSE312", "to": "CSE428", "width": 1}, {"arrows": "to", "from": "CSE312", "to": "CSE431", "width": 1}, {"arrows": "to", "from": "CSE312", "to": "CSE446", "width": 1}, {"arrows": "to", "from": "CSE312", "to": "CSE447", "width": 1}, {"arrows": "to", "from": "CSE312", "to": "CSE473", "width": 1}, {"arrows": "to", "from": "CSE312", "to": "CSE478", "width": 1}, {"arrows": "to", "from": "CSE312", "to": "CSE481", "width": 1}, {"arrows": "to", "from": "CSE312", "to": "CSE515", "width": 1}, {"arrows": "to", "from": "CSE312", "to": "CSE543", "width": 1}, {"arrows": "to", "from": "CSE312", "to": "CSE546", "width": 1}, {"arrows": "to", "from": "CSE331", "to": "CSE403", "width": 1}, {"arrows": "to", "from": "CSE331", "to": "CSE428", "width": 1}, {"arrows": "to", "from": "CSE331", "to": "CSE454", "width": 1}, {"arrows": "to", "from": "CSE331", "to": "CSE481", "width": 1}, {"arrows": "to", "from": "CSE331", "to": "CSE482", "width": 1}, {"arrows": "to", "from": "CSE332", "to": "CSE401", "width": 1}, {"arrows": "to", "from": "CSE332", "to": "CSE402", "width": 1}, {"arrows": "to", "from": "CSE332", "to": "CSE403", "width": 1}, {"arrows": "to", "from": "CSE332", "to": "CSE421", "width": 1}, {"arrows": "to", "from": "CSE332", "to": "CSE422", "width": 1}, {"arrows": "to", "from": "CSE332", "to": "CSE427", "width": 1}, {"arrows": "to", "from": "CSE332", "to": "CSE428", "width": 1}, {"arrows": "to", "from": "CSE332", "to": "CSE440", "width": 1}, {"arrows": "to", "from": "CSE332", "to": "CSE442", "width": 1}, {"arrows": "to", "from": "CSE332", "to": "CSE444", "width": 1}, {"arrows": "to", "from": "CSE332", "to": "CSE446", "width": 1}, {"arrows": "to", "from": "CSE332", "to": "CSE447", "width": 1}, {"arrows": "to", "from": "CSE332", "to": "CSE451", "width": 1}, {"arrows": "to", "from": "CSE332", "to": "CSE452", "width": 1}, {"arrows": "to", "from": "CSE332", "to": "CSE453", "width": 1}, {"arrows": "to", "from": "CSE332", "to": "CSE454", "width": 1}, {"arrows": "to", "from": "CSE332", "to": "CSE455", "width": 1}, {"arrows": "to", "from": "CSE332", "to": "CSE457", "width": 1}, {"arrows": "to", "from": "CSE332", "to": "CSE461", "width": 1}, {"arrows": "to", "from": "CSE332", "to": "CSE467", "width": 1}, {"arrows": "to", "from": "CSE332", "to": "CSE473", "width": 1}, {"arrows": "to", "from": "CSE332", "to": "CSE478", "width": 1}, {"arrows": "to", "from": "CSE332", "to": "CSE481", "width": 1}, {"arrows": "to", "from": "CSE332", "to": "CSE482", "width": 1}, {"arrows": "to", "from": "CSE332", "to": "CSE484", "width": 1}, {"arrows": "to", "from": "CSE332", "to": "CSE521", "width": 1}, {"arrows": "to", "from": "CSE333", "to": "CSE451", "width": 1}, {"arrows": "to", "from": "CSE333", "to": "CSE452", "width": 1}, {"arrows": "to", "from": "CSE333", "to": "CSE453", "width": 1}, {"arrows": "to", "from": "CSE333", "to": "CSE455", "width": 1}, {"arrows": "to", "from": "CSE333", "to": "CSE457", "width": 1}, {"arrows": "to", "from": "CSE333", "to": "CSE461", "width": 1}, {"arrows": "to", "from": "CSE333", "to": "CSE481", "width": 1}, {"arrows": "to", "from": "CSE341", "to": "CSE501", "width": 1}, {"arrows": "to", "from": "CSE341", "to": "CSE505", "width": 1}, {"arrows": "to", "from": "CSE344", "to": "CSE444", "width": 1}, {"arrows": "to", "from": "CSE351", "to": "CSE333", "width": 1}, {"arrows": "to", "from": "CSE351", "to": "CSE352", "width": 1}, {"arrows": "to", "from": "CSE351", "to": "CSE401", "width": 1}, {"arrows": "to", "from": "CSE351", "to": "CSE402", "width": 1}, {"arrows": "to", "from": "CSE351", "to": "CSE451", "width": 1}, {"arrows": "to", "from": "CSE351", "to": "CSE454", "width": 1}, {"arrows": "to", "from": "CSE351", "to": "CSE481", "width": 1}, {"arrows": "to", "from": "CSE351", "to": "CSE482", "width": 1}, {"arrows": "to", "from": "CSE351", "to": "CSE484", "width": 1}, {"arrows": "to", "from": "CSE352", "to": "CSE454", "width": 1}, {"arrows": "to", "from": "CSE352", "to": "CSE467", "width": 1}, {"arrows": "to", "from": "CSE352", "to": "CSE482", "width": 1}, {"arrows": "to", "from": "CSE369", "to": "CSE371", "width": 1}, {"arrows": "to", "from": "CSE369", "to": "CSE469", "width": 1}, {"arrows": "to", "from": "CSE369", "to": "CSE475", "width": 1}, {"arrows": "to", "from": "CSE369", "to": "CSE481", "width": 1}, {"arrows": "to", "from": "CSE373", "to": "CSE410", "width": 1}, {"arrows": "to", "from": "CSE373", "to": "CSE413", "width": 1}, {"arrows": "to", "from": "CSE373", "to": "CSE415", "width": 1}, {"arrows": "to", "from": "CSE373", "to": "CSE417", "width": 1}, {"arrows": "to", "from": "CSE414", "to": "CSE444", "width": 1}, {"arrows": "to", "from": "CSE421", "to": "CSE543", "width": 1}, {"arrows": "to", "from": "CSE421", "to": "CSE573", "width": 1}, {"arrows": "to", "from": "CSE440", "to": "CSE441", "width": 1}, {"arrows": "to", "from": "CSE446", "to": "CSE447", "width": 1}, {"arrows": "to", "from": "CSE446", "to": "CSE543", "width": 1}, {"arrows": "to", "from": "CSE446", "to": "CSE582", "width": 1}, {"arrows": "to", "from": "CSE451", "to": "CSE452", "width": 1}, {"arrows": "to", "from": "CSE451", "to": "CSE453", "width": 1}, {"arrows": "to", "from": "CSE451", "to": "CSE548", "width": 1}, {"arrows": "to", "from": "CSE451", "to": "CSE550", "width": 1}, {"arrows": "to", "from": "CSE451", "to": "CSE551", "width": 1}, {"arrows": "to", "from": "CSE451", "to": "CSE553", "width": 1}, {"arrows": "to", "from": "CSE451", "to": "CSE561", "width": 1}, {"arrows": "to", "from": "CSE452", "to": "CSE453", "width": 1}, {"arrows": "to", "from": "CSE457", "to": "CSE458", "width": 1}, {"arrows": "to", "from": "CSE458", "to": "CSE459", "width": 1}, {"arrows": "to", "from": "CSE458", "to": "CSE460", "width": 1}, {"arrows": "to", "from": "CSE459", "to": "CSE460", "width": 1}, {"arrows": "to", "from": "CSE469", "to": "CSE470", "width": 1}, {"arrows": "to", "from": "CSE473", "to": "CSE571", "width": 1}, {"arrows": "to", "from": "CSE474", "to": "CSE475", "width": 1}, {"arrows": "to", "from": "CSE486", "to": "CSE487", "width": 1}, {"arrows": "to", "from": "CSE486", "to": "CSE488", "width": 1}, {"arrows": "to", "from": "CSE501", "to": "CSE506", "width": 1}, {"arrows": "to", "from": "CSE505", "to": "CSE506", "width": 1}, {"arrows": "to", "from": "CSE521", "to": "CSE522", "width": 1}, {"arrows": "to", "from": "CSE521", "to": "CSE523", "width": 1}, {"arrows": "to", "from": "CSE521", "to": "CSE524", "width": 1}, {"arrows": "to", "from": "CSE521", "to": "CSE525", "width": 1}, {"arrows": "to", "from": "CSE546", "to": "CSE543", "width": 1}, {"arrows": "to", "from": "CSE546", "to": "CSE547", "width": 1}, {"arrows": "to", "from": "CSE546", "to": "CSE582", "width": 1}, {"arrows": "to", "from": "CSE548", "to": "CSE549", "width": 1}, {"arrows": "to", "from": "CSE551", "to": "CSE552", "width": 1}, {"arrows": "to", "from": "CSE557", "to": "CSE558", "width": 1}, {"arrows": "to", "from": "CSE567", "to": "CSE568", "width": 1}, {"arrows": "to", "from": "CSE573", "to": "CSE574", "width": 1}, {"arrows": "to", "from": "CSE576", "to": "CSE577", "width": 1}, {"arrows": "to", "from": "CSE586", "to": "CSE587", "width": 1}]);
+
+                  nodeColors = {};
+                  allNodes = nodes.get({ returnType: "Object" });
+                  for (nodeId in allNodes) {
+                    nodeColors[nodeId] = allNodes[nodeId].color;
+                  }
+                  allEdges = edges.get({ returnType: "Object" });
+                  // adding nodes and edges to the graph
+                  data = {nodes: nodes, edges: edges};
+
+                  var options = {
+    "configure": {
+        "enabled": false
+    },
+    "edges": {
+        "color": {
+            "inherit": true
+        },
+        "smooth": {
+            "enabled": true,
+            "type": "dynamic"
+        }
+    },
+    "interaction": {
+        "dragNodes": true,
+        "hideEdgesOnDrag": false,
+        "hideNodesOnDrag": false
+    },
+    "physics": {
+        "enabled": true,
+        "stabilization": {
+            "enabled": true,
+            "fit": true,
+            "iterations": 1000,
+            "onlyDynamicEdges": false,
+            "updateInterval": 50
+        }
+    }
+};
+
+                  
+
+
+                  
+
+                  network = new vis.Network(container, data, options);
+
+                  
+
+                  
+
+                  
+
+
+                  
+                      network.on("stabilizationProgress", function(params) {
+                          document.getElementById('loadingBar').removeAttribute("style");
+                          var maxWidth = 496;
+                          var minWidth = 20;
+                          var widthFactor = params.iterations/params.total;
+                          var width = Math.max(minWidth,maxWidth * widthFactor);
+                          document.getElementById('bar').style.width = width + 'px';
+                          document.getElementById('text').innerHTML = Math.round(widthFactor*100) + '%';
+                      });
+                      network.once("stabilizationIterationsDone", function() {
+                          document.getElementById('text').innerHTML = '100%';
+                          document.getElementById('bar').style.width = '496px';
+                          document.getElementById('loadingBar').style.opacity = 0;
+                          // really clean the dom element
+                          setTimeout(function () {document.getElementById('loadingBar').style.display = 'none';}, 500);
+                      });
+                  
+
+                  return network;
+
+              }
+              drawGraph();
+        </script>
+    </body>
+</html>
