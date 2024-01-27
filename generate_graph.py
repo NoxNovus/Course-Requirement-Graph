@@ -43,7 +43,14 @@ def main():
         if subject_code.lower() == 'done':
             break
 
-        SUBJECT_CODES.append(subject_code)
+        elif subject_code.lower() == 'computing':
+            SUBJECT_CODES.extend(["CSE", "MATH", "PHYS", "E E", "INFO", "AMATH"])
+        
+        else:
+            SUBJECT_CODES.append(subject_code)
+            continue
+
+        break
 
     # Get all URLs for various subjects at UW
     subjects = dict()
