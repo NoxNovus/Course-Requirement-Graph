@@ -2,6 +2,8 @@ import os
 import glob
 import requests
 from bs4 import BeautifulSoup
+import networkx as nx
+import matplotlib.pyplot as plt
 
 SUBJECT_CODES = ["CSE", "MATH", "E E", "INFO"]
 
