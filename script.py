@@ -1,15 +1,13 @@
-import os
-import glob
 import requests
 from bs4 import BeautifulSoup
 import networkx as nx
 import matplotlib.pyplot as plt
+from pyvis.network import Network
 
-SUBJECT_CODES = ["CSE", "MATH", "E E", "INFO"]
+SUBJECT_CODES = ["CSE", "MATH", "E E", "INFO", "PHYS"]
+SUBJECT_CODES = ["CSE"]
 
-def main():
-    check_cleanup()
-            
+def main():            
     # Get all URLs for various subjects at UW
     subjects = dict()
     for subject in SUBJECT_CODES:
@@ -27,7 +25,26 @@ def main():
 
         # Get a map of courses to course prereqs, and add to overall map
         course_prereqs.update(extract_prereqs(course_details))
-        
+
+    # Construct the graph and visualize it
+    course_graph = create_course_graph(course_prereqs)
+    nt = Network(height="500px", width="100%", bgcolor="#222222", font_color="white")
+    nt.from_nx(course_graph)
+    nt.show("course_prerequisites.html", notebook=False)
+
+
+def create_course_graph(course_dict):
+    G = nx.DiGraph()
+
+    for course in course_dict:
+        G.add_node(course)
+
+    for course, prerequisites in course_dict.items():
+        for prerequisite in prerequisites:
+            G.add_edge(prerequisite, course)
+
+    return G
+
 
 def extract_prereqs(course_details):
     """
@@ -101,29 +118,6 @@ def download_HTML(course, url):
     else:
         print(f"Failed to retrieve the page. Status code: {response.status_code}")
         return False
-
-
-def check_cleanup():
-    """
-    Check if user wants to cleanup HTML files from before.
-    """
-    user_input = input("Do you want to perform cleanup (delete all HTML files in directory)? (y/n): ")
-    if user_input.lower() == 'y':
-        cleanup()
-        print("Cleanup completed.")
-    elif user_input.lower() == 'n':
-        print("No cleanup performed.")
-    else:
-        print("Invalid input. Please enter 'y' or 'n'.")
-
-
-def cleanup():
-    """
-    Delete all HTML files in the current directory.
-    """
-    html_files = glob.glob('*.html')
-    for file in html_files:
-        os.remove(file)
 
 
 if __name__ == "__main__":
