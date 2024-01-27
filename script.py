@@ -3,7 +3,7 @@ from bs4 import BeautifulSoup
 import networkx as nx
 from pyvis.network import Network
 
-SUBJECT_CODES = ["B A"]
+SUBJECT_CODES = ["INFO"]
 
 KEY_PHRASES = [
     "prerequisite",
